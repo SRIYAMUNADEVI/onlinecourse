@@ -1,0 +1,177 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ARRAY_SIZE 100
+#define DEBUG false
+/*self referenced structure of data for list creation*/
+typedef struct Node
+{
+    int data;
+    struct Node *next;
+}Node;
+
+/******************************function declaration**********************/
+int *create_rand_array(int *random_num);
+void array_sort(int *random_num);
+struct Node* create_list(int value[]);
+struct Node* sort_list(struct Node*);
+void print_list(struct Node *list);
+
+/**********************main function**********************/
+int main() {
+    // Write C code here
+    int *rand_array;
+    int rand_num[ARRAY_SIZE];
+    struct Node *list_ptr1 = NULL;
+    
+    
+    /*create random array */
+    rand_array=create_rand_array(rand_num);
+    #if DEBUG
+    /*print randomly generated array*/
+    printf("\nrandom number generated\n");
+    if(rand_array!=NULL)
+    {
+        for (int index=0;index<ARRAY_SIZE;index++)
+        {
+            printf("%d\t",rand_array[index]);
+        }
+    }
+    else
+    {
+        printf("NULL array");
+    }
+    #endif
+ 
+    /*from the randomly generated array create a list*/
+    list_ptr1=create_list(rand_array);
+    print_list(list_ptr1);
+    
+    /*sort the list using bubble sort*/
+    list_ptr1=sort_list(list_ptr1);
+    print_list(list_ptr1);
+    return 0;
+}
+
+/***********************function definition*************************/
+
+/* print the list of elements in linear linked list*/
+void print_list(struct Node *list)
+{
+     struct Node *list_ptr2 = NULL;
+     list_ptr2=list;
+     char count=0;
+     printf("head");
+    /*print randomly generated array*/
+    while(list_ptr2!=NULL)
+    {
+       printf("->%d\t",list_ptr2->data);
+       count++;
+       list_ptr2=list_ptr2->next;
+       if(count==20)
+       {
+           printf("\n");
+           count=0;
+       }
+    }
+    free(list_ptr2);
+}
+
+/*create randomly generated array of data*/
+int *create_rand_array(int *random_num)
+{
+    for(int index=ARRAY_SIZE;index >= 1 ;index--)
+    {
+      random_num[index]= index;
+    }
+    for( int index=1 ;index<=ARRAY_SIZE; index++)
+    {
+        int next_index= rand()%(index+1);
+        int temp;
+        temp=random_num[index];
+        random_num[index]=random_num[next_index];
+        random_num[next_index]= temp;
+    }
+    return random_num;
+}
+
+/*create list using randomly generated array of data*/
+struct Node* create_list(int value[])
+{
+    struct Node *element = NULL;
+    struct Node *head = NULL;
+    printf("\nlist created\n");
+    for (int index=0; index<ARRAY_SIZE;index++)
+    {
+        if (element==NULL)
+        {
+            element=(struct Node *)malloc(sizeof(struct Node));
+            element->data= value[index];
+            head=element;
+            element->next=NULL;
+        }
+        else
+        {
+          element->next=malloc(sizeof(struct Node));
+          element=element->next;  
+          element->data= value[index];
+          element->next=NULL;
+        }
+    }
+    return head;
+}
+
+
+/*sort the linear list of data*/
+struct Node* sort_list(struct Node* list)
+{
+    printf("\nlist is getting sorted\n");
+    struct Node *list_ptr2 = NULL;
+    struct Node *head = NULL;
+    int count=ARRAY_SIZE;
+    list_ptr2=list->next; 
+    head =list;
+    while(count!=0)
+    {
+        while(list_ptr2!=NULL)
+        {
+            if(list->data>list_ptr2->data)
+            {
+                int temp; 
+                temp=list_ptr2->data;
+                list_ptr2->data=list->data;
+                list->data = temp;
+            }
+            list = list_ptr2;
+            list_ptr2=list_ptr2->next;
+        }
+       list = head;
+       list_ptr2=list->next; 
+       count--;
+    }
+    return head;
+}
+
+/*normal sorting of randomly generated array*/
+void array_sort(int *random_num)
+{
+    printf("\nrandom number sorted\n");
+    for(int index=0;index<99;index++)
+    {
+        for ( int next_index=index+1; next_index<ARRAY_SIZE;next_index++)
+        {
+            if (random_num[index]>random_num[next_index])
+            {
+                int temp;
+                temp=random_num[index];
+                random_num[index]=random_num[next_index];
+                random_num[next_index]= temp;
+             }
+        }
+    }
+    for (int index=0;index<ARRAY_SIZE;index++)
+    {
+        printf("%d\t",random_num[index]);
+    }
+}

@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+void find_next_date();
+void find_next_month();
+void print_date_month();
+
+typedef enum years{january, february, march, april, may, june, july,august,september,october,november,december};
+typedef struct ip{
+    char *month;
+    int date;
+}ip;
+
+/*to get string as input*/
+char year[][10]={"january", "february", "march","april", "may","june", "july", "august","september", "october","november","december"};
+
+char i,ind;
+bool matched_31=false,matched_30=false,month_to_be_incremented=false;;
+struct ip user_input;
+char arr[3]="";
+
+int main()
+{
+    printf("\nenter the month and date: eg., for January 1 ");
+
+/*get the input as string from the user and validate the month and date if it is valid*/
+    scanf("\n %s%d, ",arr, &user_input.date);
+    for (i=0;i<3;i++)
+    {
+        arr[i]=tolower(arr[i]);
+    }
+
+/*function call to find next day and month*/
+    find_next_month();
+    find_next_date();
+    return 0;
+}
+
+
+
+
+/*this function check if the month is valid or not and segregates the even months and odd months based on the dates
+in case of feb only the index is stored and used*/
+ void find_next_month()
+ {
+     ind=-1;
+    for (i=january;i<=december;i++)
+    {
+     if(strcmp(arr,year[i])==0)
+     { 
+         if((i == january)||(i == march)||(i == may)||(i == july)||(i == august)||(i == october)||(i ==december))
+         {
+             ind=i;
+             matched_31=true;
+             user_input.month=year[i];
+             break;
+         }
+        else if((i == april)||(i == june)||(i == september)||(i == november))
+        {
+            ind=i;
+            matched_30=true;
+            user_input.month=year[i];
+            break;
+        }
+        else if(i==february)
+        {
+            ind=1;
+            user_input.month=year[1];
+        }
+        else
+        {
+            printf("month not found");
+        }
+     }
+    }
+    if (ind==-1)
+    {
+         printf("month not found");
+         exit(1);
+    }
+     return 0;
+ }
+ 
+
+
+
+/*the fucntion finds the next day of the given date and month
+if the date is beyond the boundary then wrap around to next month will happen*/
+ void find_next_date()
+    {
+
+        if (matched_31 == true)
+        {
+           if((1<=user_input.date)&& (user_input.date<31))
+            {
+                user_input.date= user_input.date+1;
+                print_date_month();
+            }
+            else if(user_input.date==31)
+            {
+                /*month to be incremented */
+                 month_to_be_incremented=true;
+            }
+            else
+            {
+                printf("\ninvalid date in odd months");
+            }
+        }
+        else if(matched_30 == true)
+        {
+            if((1<=user_input.date)&& (user_input.date<30))
+            {
+                user_input.date= user_input.date+1;
+                print_date_month();
+            }
+            else if(user_input.date==30)
+            {
+                /*month to be incremented */
+                 month_to_be_incremented=true;
+            }
+            else
+            {
+                printf("\ninvalid date in even months");
+            }
+        }
+        else if((matched_31==false) && (matched_30==false))
+        {
+            if((1<=user_input.date)&& (user_input.date<28))
+            {
+                user_input.date= user_input.date+1;
+               print_date_month();
+            }
+            else if(user_input.date==28)
+            {
+                /*month to be incremented */
+                 month_to_be_incremented=true;
+            }
+            else
+            {
+                printf("\ninvalid date in february");
+            }
+        }
+        else
+        {
+            printf("invalid month");
+        }
+
+		
+
+	/* if the entered month is last date of the month then increment the month enum and reset the date to 1*/
+        if(month_to_be_incremented==true)
+        {
+	    user_input.date=1;
+            if(ind == december)
+            {
+                user_input.month=year[0];
+            }
+            else
+            {
+                user_input.month=year[ind+1];
+            }
+            print_date_month();
+        }
+        return 0;
+    }
+    
+/*this function serves only print purpose*/
+void print_date_month()
+{
+ printf("\nnext day:%s",user_input.month);
+ printf("\t%d", user_input.date);
+
+}
